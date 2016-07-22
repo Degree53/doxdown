@@ -1,0 +1,17 @@
+# Logs
+npm-debug.log*
+
+# Dependencies
+node_modules
+
+# Source code
+src
+
+# Build process
+gulpfile.js
+
+# Linting
+.eslintrc
+
+# This file
+.npmignore

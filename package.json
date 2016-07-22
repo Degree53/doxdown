@@ -1,0 +1,47 @@
+{
+  "name": "mkdox",
+  "version": "1.0.0",
+  "description": "jsDoc to MkDocs markdown generator",
+  "scripts": {
+    "build": "gulp build",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lebowski89/mkdox.git"
+  },
+  "keywords": [
+    "jsDoc",
+    "MkDocs",
+    "markdown",
+    "generator"
+  ],
+  "author": "Mike Geldard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lebowski89/mkdox/issues"
+  },
+  "homepage": "https://github.com/lebowski89/mkdox#readme",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "dox": "^0.8.1",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "object-assign": "^4.1.0",
+    "rimraf": "^2.5.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "babel-preset-es2015": "^6.9.0",
+    "del": "^2.2.1",
+    "eslint": "^3.0.1",
+    "eslint-config-degree53-core": "^3.0.11",
+    "eslint-config-degree53-es6": "^3.0.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "mkdox": "./bin/index.js"
+  }
+}

@@ -1,0 +1,21 @@
+{
+	"extends": [
+		"degree53-core",
+		"degree53-es6"
+	],
+	
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	
+	"rules": {
+		/*"brace-style": 0,*/
+		"no-magic-numbers": [ 2, {
+			"detectObjects": true,
+			"enforceConst": true,
+			"ignore": [ 0, 1, 2 ],
+			"ignoreArrayIndexes": false
+		}]
+	}
+}
