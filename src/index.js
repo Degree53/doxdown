@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+import 'babel-polyfill';
 import minimist from 'minimist';
 
 import { getDocsTrees } from './builder';

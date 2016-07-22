@@ -4,10 +4,6 @@ import path from 'path';
 
 import * as options from './options';
 
-function findInArray (array, comparison) {
-	return array.filter(i => comparison(i))[0];
-}
-
 export function getFilePaths (dir, filePaths = []) {
 
 	// Remove ignored files / directories
@@ -44,7 +40,6 @@ export function getMkdoxComments (filePaths) {
 	
 	// Only return comments with mkdox tags
 	return comments.filter(c =>
-		// c.tags.filter(tag => tag.type === 'mkdox')[0]
-		findInArray(c.tags, t => t.type === 'mkdox')
+		c.tags.find(t => t.type === 'mkdox')
 	);
 }

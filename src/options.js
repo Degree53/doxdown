@@ -1,21 +1,25 @@
 const options = {
 	ignore: {
 		alias: 'i',
+		help: 'comma-separated list of files/directories to ignore',
 		parser: value => value.split(','),
 		value: ['.git', 'node_modules']
 	},
 	out: {
 		alias: 'o',
+		help: 'relative path to the output directory',
 		parser: value => value,
 		value: './mkdox'
 	},
 	regex: {
 		alias: 'r',
+		help: 'regex string for matching files in the source directory',
 		parser: value => new RegExp(value),
 		value: new RegExp(/\.js$/)
 	},
 	src: {
 		alias: 's',
+		help: 'relative path to the source directory',
 		parser: value => value,
 		value: './'
 	}
@@ -23,15 +27,22 @@ const options = {
 
 function getOptionByAlias (alias) {
 	
-	let option;
+	const option = Object.keys(options).find(k =>
+		options[k].alias === alias
+	);
 	
-	Object.keys(options).forEach(key => {
-		if (options[key].alias === alias) {
-			option = options[key];
-		}
-	});
+	return options[option];
+}
+
+function optionsError (optionName) {
 	
-	return option;
+	console.log(`'${optionName}' is not a supported option!\n`);
+	
+	Object.keys(options).forEach(k =>
+		console.log(`   --${k}   \t-${options[k].alias}\t: ${options[k].help}`)
+	);
+	
+	process.exit();
 }
 
 export function get (optionName) {
@@ -44,7 +55,7 @@ export function set (optionName, value) {
 		getOptionByAlias(optionName) : options[optionName];
 	
 	if (!option) {
-		throw new Error(`${optionName} is not a supported option`);
+		optionsError(optionName);
 	}
 	
 	option.value = option.parser(value);

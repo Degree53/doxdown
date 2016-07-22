@@ -1,12 +1,27 @@
-import assign from 'object-assign';
-
-function findInArray (array, comparison) {
-	return array.filter(i => comparison(i))[0];
+function parsePathNames (comment) {
+	const mkdoxTag = comment.tags.find(t => t.type === 'mkdox');
+	return mkdoxTag.string.split(/\s*>\s*/);
 }
 
-function parsePathNames (comment) {
-	const mkdoxTag = findInArray(comment.tags, t => t.type === 'mkdox');
-	return mkdoxTag.string.split(/\s*>\s*/);
+function addPage (subPages, pageName, comment) {
+	
+	const page = subPages.find(p => p.pageName === pageName);
+	
+	if (page) {
+		
+		if (page.comments) {
+			page.comments.push(comment);
+		} else {
+			page.comments = [comment];
+		}
+		
+	} else {
+		
+		subPages.push({
+			pageName,
+			comments: [comment]
+		});
+	}
 }
 
 function buildPages (pathNames, docTree, comment) {
@@ -14,41 +29,18 @@ function buildPages (pathNames, docTree, comment) {
 	if (pathNames.length === 1) {
 		
 		if (docTree.subPages) {
-			
-			const page = findInArray(docTree.subPages, p =>
-				p.pageName === pathNames[0]
-			);
-			
-			if (page) {
-			
-				if (page.comments) {
-					page.comments.push(comment);
-				} else {
-					page.comments = [comment];
-				}
-			
-			} else {
-			
-				docTree.subPages.push({
-					pageName: pathNames[0],
-					comments: [comment]
-				});
-			}
-			
+			addPage(docTree.subPages, pathNames[0], comment);
 		} else {
-			docTree.subPages = [{
-				pageName: pathNames[0],
-				comments: [comment]
-			}];
+			docTree.subPages = [];
+			addPage(docTree.subPages, pathNames[0], comment);
 		}
-		
 	}
 	
 	if (pathNames.length > 1) {
 		
 		if (docTree.subPages) {
 			
-			const page = findInArray(docTree.subPages, p =>
+			const page = docTree.subPages.find(p =>
 				p.pageName === pathNames[0]
 			);
 			
@@ -74,9 +66,7 @@ function getDocsFromComments (comments) {
 		
 		const docName = parsePathNames(c)[0];
 		
-		let docTree = findInArray(docsTrees, dt =>
-			dt.docName === docName
-		);
+		let docTree = docsTrees.find(dt => dt.docName === docName);
 		
 		if (!docTree) {
 			docTree = { docName, comments: [] };
