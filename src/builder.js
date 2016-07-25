@@ -1,6 +1,6 @@
 function parsePathNames (comment) {
-	const mkdoxTag = comment.tags.find(t => t.type === 'mkdox');
-	return mkdoxTag.string.split(/\s*>\s*/);
+	const doxdownTag = comment.tags.find(t => t.type === 'dd');
+	return doxdownTag.string.split(/\s*>\s*/);
 }
 
 function addPage (subPages, pageName, comment) {

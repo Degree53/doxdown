@@ -28,7 +28,7 @@ export function getFilePaths (dir, filePaths = []) {
 	return filePaths;
 }
 
-export function getMkdoxComments (filePaths) {
+export function getDoxdownComments (filePaths) {
 	
 	const comments = [];
 	
@@ -38,8 +38,8 @@ export function getMkdoxComments (filePaths) {
 		dox.parseComments(text).forEach(c => comments.push(c));
 	});
 	
-	// Only return comments with mkdox tags
+	// Only return comments with dd tags
 	return comments.filter(c =>
-		c.tags.find(t => t.type === 'mkdox')
+		c.tags.find(t => t.type === 'dd')
 	);
 }

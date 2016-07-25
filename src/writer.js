@@ -77,17 +77,17 @@ function writeMkdocs (docTree, docsPath) {
 
 export function generateDocs (docsTrees) {
 	
-	const mkdoxDir = options.get('out');
-	const mkdoxDirPath = path.resolve(process.cwd(), mkdoxDir);
+	const doxdownDir = options.get('out');
+	const doxdownDirPath = path.resolve(process.cwd(), doxdownDir);
 	
 	docsTrees.forEach(dt => {
 		
 		const docsName = dt.docName;
-		const docsDirPath = path.join(mkdoxDirPath, docsName);
+		const docsDirPath = path.join(doxdownDirPath, docsName);
 		const markdownDirPath = path.join(docsDirPath, './docs');
 		const mkdocsYmlPath = path.join(docsDirPath, './mkdocs.yml');
 		
-		rimraf(path.join(mkdoxDir, docsName), {}, () => {
+		rimraf(path.join(doxdownDir, docsName), {}, () => {
 			
 			mkdirp(markdownDirPath, () => {
 				
@@ -98,7 +98,7 @@ export function generateDocs (docsTrees) {
 				writeMkdocs(dt, markdownDirPath, stream)
 					.then(() => {
 						stream.end();
-						console.log(`mkdox: "${docsName}" docs output to ${docsDirPath}`);
+						console.log(`doxdown: "${docsName}" docs output to ${docsDirPath}`);
 					}, error => {
 						console.log(error);
 					});

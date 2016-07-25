@@ -9,7 +9,7 @@ const options = {
 		alias: 'o',
 		help: 'relative path to the output directory',
 		parser: value => value,
-		value: './mkdox'
+		value: './doxdown'
 	},
 	regex: {
 		alias: 'r',

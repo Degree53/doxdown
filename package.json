@@ -1,5 +1,5 @@
 {
-  "name": "mkdox",
+  "name": "doxdown",
   "version": "1.0.0",
   "description": "jsDoc to MkDocs markdown generator",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lebowski89/mkdox.git"
+    "url": "git+https://github.com/lebowski89/doxdown.git"
   },
   "keywords": [
     "jsDoc",
@@ -19,9 +19,9 @@
   "author": "Mike Geldard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lebowski89/mkdox/issues"
+    "url": "https://github.com/lebowski89/doxdown/issues"
   },
-  "homepage": "https://github.com/lebowski89/mkdox#readme",
+  "homepage": "https://github.com/lebowski89/doxdown#readme",
   "dependencies": {
     "babel-polyfill": "^6.9.1",
     "bluebird": "^3.4.1",
@@ -42,6 +42,6 @@
   },
   "preferGlobal": true,
   "bin": {
-    "mkdox": "./bin/index.js"
+    "doxdown": "./bin/index.js"
   }
 }

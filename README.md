@@ -1,2 +1,2 @@
-# mkdox
+# doxdown
 jsDoc to MkDocs markdown generator
