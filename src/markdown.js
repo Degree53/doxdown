@@ -1,20 +1,22 @@
-const paramRegex = /^\{[A-Za-z]+\}\s+[A-Za-z]+\s+[A-Za-z\s]+$/;
-const descRegex = /^\{[A-Za-z]+\}\s+[A-Za-z]+\s+([A-Za-z\s]+)$/;
-const nameRegex = /^\{[A-Za-z]+\}\s+([A-Za-z]+)\s+[A-Za-z\s]+$/;
-const typeRegex = /^(\{[A-Za-z]+\})\s+[A-Za-z]+\s+[A-Za-z\s]+$/;
+const typeRgx = /(\{[a-zA-Z]+\})/.source;
+const nameRgx = /([a-zA-Z0-9.?]+)/.source;
+const descRgx = /([a-zA-Z0-9'\s]+)/.source;
+
+// Matches a valid param string as output by dox
+const paramRgx = new RegExp(`^${typeRgx}\\s+${nameRgx}\\s+[-\\s]*${descRgx}$`);
 
 function getTagValue (tags, type) {
 	return tags.filter(tag => tag.type === type)[0];
 }
 
 function getCommentName (comment) {
-	const name = getTagValue(comment.tags, 'name');
-	return `\n## ${name.string}\n`;
+	const commentName = getTagValue(comment.tags, 'name');
+	return `\n## ${commentName.string}\n`;
 }
 
 function getCommentDescription (comment) {
-	const desc = getTagValue(comment.tags, 'desc');
-	return `${desc.string}\n`;
+	const commentDesc = getTagValue(comment.tags, 'desc');
+	return `${commentDesc.string}\n`;
 }
 
 function getCommentTableHead () {
@@ -27,15 +29,16 @@ function getCommentTableRows (comment) {
 	
 	return params.map(param => {
 		
-		if (!paramRegex.test(param.string)) {
+		if (!paramRgx.test(param.string)) {
+			// Skip if param badly formatted
 			return '';
 		}
 		
-		const name = param.string.match(nameRegex)[1];
-		const type = param.string.match(typeRegex)[1];
-		const desc = param.string.match(descRegex)[1];
+		const commentType = param.string.match(paramRgx)[1];
+		const commentName = param.string.match(paramRgx)[2];
+		const commentDesc = param.string.match(paramRgx)[3];
 		
-		return `${name} | ${type} | ${desc}\n`;
+		return `${commentName} | ${commentType} | ${commentDesc}\n`;
 		
 	}).join('');
 }
@@ -44,7 +47,7 @@ function getCommentCode (comment) {
 	return `\n\`\`\`javascript\n${comment.code}\n\`\`\`\n`;
 }
 
-export function toMarkdownString (tree) {
+export function getMarkdownString (tree) {
 	
 	let markdownString = `# ${tree.pageName}\n`;
 	

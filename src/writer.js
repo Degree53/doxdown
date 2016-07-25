@@ -1,12 +1,12 @@
 import fs from 'fs';
 import mkdirp from 'mkdirp';
-import os from 'os';
+// import os from 'os';
 import path from 'path';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 
 import * as options from './options';
-import { toMarkdownString } from './markdown';
+import { getMarkdownString } from './markdown';
 
 function newLine (string, indentation = 0) {
 	
@@ -16,7 +16,7 @@ function newLine (string, indentation = 0) {
 		newString = newString.replace(/(.*)/, '\t$1');
 	}
 	
-	return `${os.EOL}${newString}`;
+	return `\n${newString}`;
 }
 
 function formatFilename (pageName) {
@@ -28,7 +28,7 @@ function writeMdFile (docTree, docsPath, resolve, reject) {
 	const pageName = docTree.pageName;
 	const filename = `${formatFilename(pageName)}.md`;
 	const filePath = path.join(docsPath, `${filename}`);
-	const text = toMarkdownString(docTree);
+	const text = getMarkdownString(docTree);
 	
 	mkdirp(docsPath, () => {
 		
