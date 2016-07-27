@@ -47,11 +47,11 @@ function getCommentCode (comment) {
 	return `\n\`\`\`javascript\n${comment.code}\n\`\`\`\n`;
 }
 
-export function getMarkdownString (tree) {
+export function getMarkdownString (docsTree) {
 	
-	let markdownString = `# ${tree.pageName}\n`;
+	let markdownString = `# ${docsTree.pageName}\n`;
 	
-	tree.comments.forEach(comment => {
+	docsTree.comments.forEach(comment => {
 		
 		markdownString += getCommentName(comment);
 		markdownString += getCommentDescription(comment);

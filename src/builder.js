@@ -3,77 +3,51 @@ function parsePathNames (comment) {
 	return doxdownTag.string.split(/\s*>\s*/);
 }
 
-function addPage (subPages, pageName, comment) {
+function buildPages (docsTree, pathNames, comment) {
 	
-	const page = subPages.find(p => p.pageName === pageName);
-	
-	if (page) {
+	if (pathNames.length > 0) {
 		
-		if (page.comments) {
-			page.comments.push(comment);
-		} else {
-			page.comments = [comment];
+		if (!docsTree.subPages) {
+			docsTree.subPages = [];
 		}
+		
+		let page = docsTree.subPages.find(p =>
+			p.pageName === pathNames[0]
+		);
+		
+		if (!page) {
+			page = { pageName: pathNames[0] };
+			docsTree.subPages.push(page);
+		}
+		
+		buildPages(page, pathNames.slice(1), comment);
 		
 	} else {
 		
-		subPages.push({
-			pageName,
-			comments: [comment]
-		});
+		if (!docsTree.comments) {
+			docsTree.comments = [];
+		}
+		
+		docsTree.comments.push(comment);
 	}
 }
 
-function buildPages (pathNames, docTree, comment) {
-	
-	if (pathNames.length === 1) {
-		
-		if (docTree.subPages) {
-			addPage(docTree.subPages, pathNames[0], comment);
-		} else {
-			docTree.subPages = [];
-			addPage(docTree.subPages, pathNames[0], comment);
-		}
-	}
-	
-	if (pathNames.length > 1) {
-		
-		if (docTree.subPages) {
-			
-			const page = docTree.subPages.find(p =>
-				p.pageName === pathNames[0]
-			);
-			
-			if (page) {
-				buildPages(pathNames.slice(1), page, comment);
-			} else {
-				buildPages(pathNames.slice(1), {}, comment);
-			}
-			
-		} else {
-			docTree.subPages = [
-				buildPages(pathNames.slice(1), {}, comment)
-			];
-		}
-	}
-}
-
-function getDocsFromComments (comments) {
+function assignCommentsToDocsTrees (comments) {
 	
 	const docsTrees = [];
 	
 	comments.forEach(c => {
 		
-		const docName = parsePathNames(c)[0];
+		const docsName = parsePathNames(c)[0];
 		
-		let docTree = docsTrees.find(dt => dt.docName === docName);
+		let docsTree = docsTrees.find(dt => dt.docsName === docsName);
 		
-		if (!docTree) {
-			docTree = { docName, comments: [] };
-			docsTrees.push(docTree);
+		if (!docsTree) {
+			docsTree = { docsName, comments: [] };
+			docsTrees.push(docsTree);
 		}
 		
-		docTree.comments.push(c);
+		docsTree.comments.push(c);
 	});
 	
 	return docsTrees;
@@ -81,11 +55,11 @@ function getDocsFromComments (comments) {
 
 export function getDocsTrees (comments) {
 	
-	const docsTrees = getDocsFromComments(comments);
+	const docsTrees = assignCommentsToDocsTrees(comments);
 	
 	docsTrees.forEach(dt => {
 		dt.comments.forEach(c => {
-			buildPages(parsePathNames(c).slice(1), dt, c);
+			buildPages(dt, parsePathNames(c).slice(1), c);
 		});
 	});
 	
