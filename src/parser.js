@@ -47,6 +47,6 @@ export function getDoxdownComments () {
 	
 	// Only return comments with dd-doc tags
 	return comments.filter(c =>
-		c.tags.find(t => t.type === 'dd-doc')
+		c.tags.filter(t => t.type === 'dd-doc')[0]
 	);
 }

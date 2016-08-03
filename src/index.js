@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-import 'babel-polyfill';
 import minimist from 'minimist';
 
 import * as options from './options';

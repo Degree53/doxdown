@@ -27,9 +27,9 @@ const options = {
 
 function getOptionByAlias (alias) {
 	
-	const option = Object.keys(options).find(k =>
+	const option = Object.keys(options).filter(k =>
 		options[k].alias === alias
-	);
+	)[0];
 	
 	return options[option];
 }

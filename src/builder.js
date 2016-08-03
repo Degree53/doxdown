@@ -6,7 +6,7 @@
  */
 
 function parsePathNames (comment) {
-	const doxdownTag = comment.tags.find(t => t.type === 'dd-doc');
+	const doxdownTag = comment.tags.filter(t => t.type === 'dd-doc')[0];
 	return doxdownTag.string.split(/\s*>\s*/);
 }
 
@@ -16,7 +16,7 @@ function getPage (docsTree, pageName) {
 		docsTree.subPages = [];
 	}
 	
-	let page = docsTree.subPages.find(p => p.pageName === pageName);
+	let page = docsTree.subPages.filter(p => p.pageName === pageName)[0];
 	
 	if (!page) {
 		page = { pageName };
@@ -52,7 +52,7 @@ function assignCommentsToDocsTrees (comments) {
 		
 		const docsName = parsePathNames(c)[0];
 		
-		let docsTree = docsTrees.find(dt => dt.docsName === docsName);
+		let docsTree = docsTrees.filter(dt => dt.docsName === docsName)[0];
 		
 		if (!docsTree) {
 			docsTree = { docsName, comments: [] };
