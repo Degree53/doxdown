@@ -1,6 +1,6 @@
 {
   "name": "doxdown",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "jsDoc to MkDocs markdown generator",
   "scripts": {
     "build": "gulp build",
