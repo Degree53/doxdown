@@ -2,7 +2,7 @@
 
 doxdown is a jsDoc to [MkDocs](http://www.mkdocs.org/) markdown generator. It allows you to control your documentation on a comment by comment basis, choosing the page and document the comment belongs to. This is especially useful when you need to document multiple separate APIs in one codebase.
 
-Running it on a directory with the default options will parse all nested JavaScript files and output a `./doxdown` folder containing a folder per document each with Markdown files and a `mkdocs.yml` in the format expected by [MkDocs](http://www.mkdocs.org/).
+Running it on a directory with the default options will parse all nested JavaScript files and output a `./doxdown` folder. Inside will be a folder for each document with Markdown files and a `mkdocs.yml` file in the format expected by [MkDocs](http://www.mkdocs.org/). You can then run MkDocs on any of those folders to build a site that you can deploy to a server.
 
 ## Installation
 
@@ -25,7 +25,7 @@ doxdown looks for jsDoc-style comments with a `@dd-doc` tag in the format `docum
 
 ```javascript
 /**
- * @dd-doc My API > My Section > My Page
+ * @dd-doc My Document > My Section > My Page
  * @dd-name myFunction
  * @dd-desc A description of myFunction
  * @dd-param {string} myParam a description of myParam

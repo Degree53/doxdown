@@ -6,7 +6,7 @@
 
 const typeRgx = /(\{[a-zA-Z]+\})/.source;
 const nameRgx = /\s+([a-zA-Z0-9.]+)/.source;
-const descRgx = /\s+(?:-\s+)?([a-zA-Z0-9'"\s.]+)/.source;
+const descRgx = /\s+(?:-\s+)?(.+)/.source;
 
 // Matches a valid param string as output by dox
 const paramRgx = new RegExp(`^${typeRgx}${nameRgx}${descRgx}$`);
