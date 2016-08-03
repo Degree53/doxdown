@@ -24,6 +24,7 @@
   "homepage": "https://github.com/lebowski89/doxdown#readme",
   "dependencies": {
     "bluebird": "^3.4.1",
+    "cli-color": "^1.1.0",
     "dox": "^0.8.1",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",

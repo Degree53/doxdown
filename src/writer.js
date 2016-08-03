@@ -4,6 +4,7 @@
  * to a mkdocs.yml file.
  */
 
+import clic from 'cli-color';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
@@ -28,6 +29,10 @@ function formatFilename (pageName) {
 	return pageName.toLowerCase().replace(/\s+/g, '-');
 }
 
+function getTimeString () {
+	return new Date().toTimeString().substring(0, 8);
+}
+
 function writeMdFile (text, filePath, resolve, reject) {
 	
 	fs.writeFile(filePath, text, 'utf8', error => {
@@ -35,8 +40,7 @@ function writeMdFile (text, filePath, resolve, reject) {
 		if (error) {
 			reject(error);
 		} else {
-			const time = new Date().toTimeString().substring(0, 8);
-			console.log(`[${time}] ${filePath}`);
+			console.log(`[${getTimeString()}] ${filePath}`);
 			resolve(filePath);
 		}
 	});
@@ -105,7 +109,8 @@ export function generateDocs (docsTrees) {
 		const docsPath = path.join(outputPath, docsName);
 		const markdownPath = path.join(docsPath, './docs');
 		const mkdocsYmlPath = path.join(docsPath, './mkdocs.yml');
-		const report = `"${docsName}" docs output to ${docsPath}`;
+		const success = clic.green(`"${docsName}" docs write complete`);
+		const fail = clic.red(`"${docsName}" docs write failed`);
 		
 		rimraf(path.join(outputDir, docsName), {}, () => {
 			
@@ -118,9 +123,10 @@ export function generateDocs (docsTrees) {
 				writeMkdocs(dt, markdownPath, stream)
 					.then(filePaths => {
 						stream.end();
-						console.log(report);
+						console.log(`[${getTimeString()}] ${success}`);
 					}, error => {
 						stream.end();
+						console.log(`[${getTimeString()}] ${fail}`);
 						console.log(error);
 					});
 			});
