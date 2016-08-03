@@ -34,15 +34,20 @@ function getOptionByAlias (alias) {
 	return options[option];
 }
 
-function optionsError (optionName) {
-	
-	console.log(`'${optionName}' is not a supported option!\n`);
+function displayHelp () {
 	
 	Object.keys(options).forEach(k =>
-		console.log(`   --${k}   \t-${options[k].alias}\t: ${options[k].help}`)
+		console.log(
+			`   --${k}   \t-${options[k].alias}\t: ${options[k].help}`
+		)
 	);
 	
 	process.exit();
+}
+
+function displayError (optionName) {
+	console.log(`'${optionName}' is not a supported option!\n`);
+	displayHelp();
 }
 
 export function get (optionName) {
@@ -51,11 +56,15 @@ export function get (optionName) {
 
 export function set (optionName, value) {
 	
+	if (optionName === 'help' || optionName === 'h') {
+		displayHelp();
+	}
+	
 	const option = optionName.length === 1 ?
 		getOptionByAlias(optionName) : options[optionName];
 	
 	if (!option) {
-		optionsError(optionName);
+		displayError(optionName);
 	}
 	
 	option.value = option.parser(value);

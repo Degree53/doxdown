@@ -10,7 +10,7 @@
 	},
 	
 	"rules": {
-		"no-magic-numbers": [ 2, {
+		"no-magic-numbers": [ 1, {
 			"detectObjects": true,
 			"enforceConst": true,
 			"ignore": [ 0, 1, 2 ],

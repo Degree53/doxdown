@@ -1,44 +1,48 @@
+/**
+ * Iterates over all comment objects for a level of a 'docsTree'
+ * object and pieces together a markdown string. Returns all strings
+ * concatenated representing a full markdown page.
+ */
+
 const typeRgx = /(\{[a-zA-Z]+\})/.source;
-const nameRgx = /([a-zA-Z0-9.?]+)/.source;
-const descRgx = /([a-zA-Z0-9'\s]+)/.source;
+const nameRgx = /\s+([a-zA-Z0-9.]+)/.source;
+const descRgx = /\s+(?:-\s+)?([a-zA-Z0-9'"\s.]+)/.source;
 
 // Matches a valid param string as output by dox
-const paramRgx = new RegExp(`^${typeRgx}\\s+${nameRgx}\\s+[-\\s]*${descRgx}$`);
+const paramRgx = new RegExp(`^${typeRgx}${nameRgx}${descRgx}$`);
 
-function getTagValue (tags, type) {
-	return tags.filter(tag => tag.type === type)[0];
+function getTagByType (tags, type) {
+	return tags.filter(t => t.type === type)[0];
 }
 
 function getCommentName (comment) {
-	const commentName = getTagValue(comment.tags, 'name');
-	return `\n## ${commentName.string}\n`;
+	const nameTag = getTagByType(comment.tags, 'dd-name');
+	return nameTag ? `\n## ${nameTag.string}\n` : '\n## Missing Name!\n';
 }
 
 function getCommentDescription (comment) {
-	const commentDesc = getTagValue(comment.tags, 'desc');
-	return `${commentDesc.string}\n`;
+	const descTag = getTagByType(comment.tags, 'dd-desc');
+	return descTag ? `${descTag.string}\n` : 'Missing Description!\n';
 }
 
 function getCommentTableHead () {
-	return '\nName | Type | Description\n- | - | -\n';
+	return '\nName | Type | Description\n--- | --- | ---\n';
 }
 
 function getCommentTableRows (comment) {
 	
-	const params = comment.tags.filter(tag => tag.type === 'param');
+	const params = comment.tags.filter(t => t.type === 'dd-param');
 	
-	return params.map(param => {
+	return params.map(p => {
 		
-		if (!paramRgx.test(param.string)) {
-			// Skip if param badly formatted
+		const match = p.string.match(paramRgx);
+		
+		// Skip if param is badly formatted
+		if (match === null) {
 			return '';
 		}
 		
-		const commentType = param.string.match(paramRgx)[1];
-		const commentName = param.string.match(paramRgx)[2];
-		const commentDesc = param.string.match(paramRgx)[3];
-		
-		return `${commentName} | ${commentType} | ${commentDesc}\n`;
+		return `${match[2]} | ${match[1]} | ${match[3]}\n`;
 		
 	}).join('');
 }
@@ -51,13 +55,19 @@ export function getMarkdownString (docsTree) {
 	
 	let markdownString = `# ${docsTree.pageName}\n`;
 	
-	docsTree.comments.forEach(comment => {
+	docsTree.comments.forEach(c => {
 		
-		markdownString += getCommentName(comment);
-		markdownString += getCommentDescription(comment);
-		markdownString += getCommentTableHead();
-		markdownString += getCommentTableRows(comment);
-		markdownString += getCommentCode(comment);
+		markdownString += getCommentName(c);
+		markdownString += getCommentDescription(c);
+		
+		const tableRows = getCommentTableRows(c);
+		
+		if (tableRows.length > 0) {
+			markdownString += getCommentTableHead();
+			markdownString += tableRows;
+		}
+		
+		markdownString += getCommentCode(c);
 	});
 	
 	return markdownString;

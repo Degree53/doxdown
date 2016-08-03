@@ -1,3 +1,9 @@
+/**
+ * Traverses each 'docsTree' object and writing markdown pages for
+ * each level with comments as well as writing titles and filenames
+ * to a mkdocs.yml file.
+ */
+
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
@@ -25,11 +31,13 @@ function formatFilename (pageName) {
 function writeMdFile (text, filePath, resolve, reject) {
 	
 	fs.writeFile(filePath, text, 'utf8', error => {
-			
+		
 		if (error) {
 			reject(error);
 		} else {
-			resolve();
+			const time = new Date().toTimeString().substring(0, 8);
+			console.log(`[${time}] ${filePath}`);
+			resolve(filePath);
 		}
 	});
 }
@@ -83,11 +91,7 @@ function writeMkdocs (docsTree, markdownPath, stream) {
 		writePages(sp, markdownPath, promises, stream)
 	);
 	
-	return new Promise((resolve, reject) => {
-		Promise.all(promises).then(() => {
-			resolve();
-		});
-	});
+	return Promise.all(promises);
 }
 
 export function generateDocs (docsTrees) {
@@ -112,9 +116,12 @@ export function generateDocs (docsTrees) {
 				stream.write(newLine('pages:'));
 				
 				writeMkdocs(dt, markdownPath, stream)
-					.then(() => {
+					.then(filePaths => {
 						stream.end();
 						console.log(report);
+					}, error => {
+						stream.end();
+						console.log(error);
 					});
 			});
 		});

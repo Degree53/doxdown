@@ -1,10 +1,16 @@
+/**
+ * Traverses the source directory tree and collects an array of file
+ * paths for parsing. Then uses Dox to parse all the valid files and
+ * returns an array of doxdown comment objects.
+ */
+
 import dox from 'dox';
 import fs from 'fs';
 import path from 'path';
 
 import * as options from './options';
 
-export function getFilePaths (dir, filePaths = []) {
+function getFilePaths (dir, filePaths = []) {
 
 	// Remove ignored files / directories
 	const fileOrDirNames = fs.readdirSync(dir)
@@ -28,9 +34,10 @@ export function getFilePaths (dir, filePaths = []) {
 	return filePaths;
 }
 
-export function getDoxdownComments (filePaths) {
+export function getDoxdownComments () {
 	
 	const comments = [];
+	const filePaths = getFilePaths(options.get('src'));
 	
 	// Read each file and parse it with Dox
 	filePaths.forEach(fp => {
@@ -38,8 +45,8 @@ export function getDoxdownComments (filePaths) {
 		dox.parseComments(text).forEach(c => comments.push(c));
 	});
 	
-	// Only return comments with dd tags
+	// Only return comments with dd-doc tags
 	return comments.filter(c =>
-		c.tags.find(t => t.type === 'dd')
+		c.tags.find(t => t.type === 'dd-doc')
 	);
 }

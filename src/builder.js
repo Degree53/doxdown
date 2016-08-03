@@ -1,24 +1,36 @@
+/**
+ * Iterates through a comments array and returns an array with a
+ * 'docsTree' objects for each specified document. Each 'docsTree'
+ * object represents the structure of the document in a convenient
+ * form for traversing.
+ */
+
 function parsePathNames (comment) {
-	const doxdownTag = comment.tags.find(t => t.type === 'dd');
+	const doxdownTag = comment.tags.find(t => t.type === 'dd-doc');
 	return doxdownTag.string.split(/\s*>\s*/);
+}
+
+function getPage (docsTree, pageName) {
+	
+	if (!docsTree.subPages) {
+		docsTree.subPages = [];
+	}
+	
+	let page = docsTree.subPages.find(p => p.pageName === pageName);
+	
+	if (!page) {
+		page = { pageName };
+		docsTree.subPages.push(page);
+	}
+	
+	return page;
 }
 
 function buildPages (docsTree, pathNames, comment) {
 	
 	if (pathNames.length > 0) {
 		
-		if (!docsTree.subPages) {
-			docsTree.subPages = [];
-		}
-		
-		let page = docsTree.subPages.find(p =>
-			p.pageName === pathNames[0]
-		);
-		
-		if (!page) {
-			page = { pageName: pathNames[0] };
-			docsTree.subPages.push(page);
-		}
+		const page = getPage(docsTree, pathNames[0]);
 		
 		buildPages(page, pathNames.slice(1), comment);
 		

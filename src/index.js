@@ -3,9 +3,9 @@
 import 'babel-polyfill';
 import minimist from 'minimist';
 
-import { getDocsTrees } from './builder';
 import * as options from './options';
-import { getFilePaths, getDoxdownComments } from './parser';
+import { getDoxdownComments } from './parser';
+import { getDocsTrees } from './builder';
 import { generateDocs } from './writer';
 
 const argv = minimist(process.argv.slice(2));
@@ -15,8 +15,7 @@ Object.keys(argv).slice(1).forEach(k =>
 	options.set(k, argv[k])
 );
 
-const paths = getFilePaths(options.get('src'));
-const comments = getDoxdownComments(paths);
+const comments = getDoxdownComments();
 const docsTrees = getDocsTrees(comments);
 
 generateDocs(docsTrees);
