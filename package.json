@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lebowski89/doxdown.git"
+    "url": "git+https://github.com/Degree53/doxdown.git"
   },
   "keywords": [
     "jsDoc",
@@ -19,9 +19,9 @@
   "author": "Mike Geldard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lebowski89/doxdown/issues"
+    "url": "https://github.com/Degree53/doxdown/issues"
   },
-  "homepage": "https://github.com/lebowski89/doxdown#readme",
+  "homepage": "https://github.com/Degree53/doxdown#readme",
   "dependencies": {
     "bluebird": "^3.4.1",
     "cli-color": "^1.1.0",
