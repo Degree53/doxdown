@@ -38,7 +38,7 @@ function displayHelp () {
 	
 	Object.keys(options).forEach(k =>
 		console.log(
-			`   --${k}   \t-${options[k].alias}\t: ${options[k].help}`
+			`   --${k}   \t-${options[k].alias}\t${options[k].help}`
 		)
 	);
 	

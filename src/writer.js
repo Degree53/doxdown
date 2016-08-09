@@ -19,7 +19,7 @@ function newLine (string, indent = 0) {
 	let newString = string;
 	
 	for (let i = 0; i < indent; i++) {
-		newString = newString.replace(/(.*)/, '    $1');
+		newString = `    ${newString}`;
 	}
 	
 	return `\n${newString}`;
@@ -127,7 +127,6 @@ export function generateDocs (docsTrees) {
 					}, error => {
 						stream.end();
 						console.log(`[${getTimeString()}] ${fail}`);
-						console.log(error);
 					});
 			});
 		});

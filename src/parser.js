@@ -45,8 +45,8 @@ export function getDoxdownComments () {
 		dox.parseComments(text).forEach(c => comments.push(c));
 	});
 	
-	// Only return comments with dd-doc tags
+	// Only return comments with docs tags
 	return comments.filter(c =>
-		c.tags.filter(t => t.type === 'dd-doc')[0]
+		c.tags.filter(t => t.type === 'docs')[0]
 	);
 }

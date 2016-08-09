@@ -6,8 +6,8 @@
  */
 
 function parsePathNames (comment) {
-	const doxdownTag = comment.tags.filter(t => t.type === 'dd-doc')[0];
-	return doxdownTag.string.split(/\s*>\s*/);
+	const doxdownTag = comment.tags.filter(t => t.type === 'docs')[0];
+	return doxdownTag.string.split(/\s*\/{2}\s*/);
 }
 
 function getPage (docsTree, pageName) {
