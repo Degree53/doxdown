@@ -5,7 +5,7 @@
  */
 
 const typeRgx = /\{([a-zA-Z[\]]+)\}/.source;
-const nameRgx = /\s+([a-zA-Z0-9.[\]]+)(?:\s+-)?/.source;
+const nameRgx = /\s+([a-zA-Z0-9-.[\]]+)(?:\s+-)?/.source;
 const descRgx = /\s+([^-].+)/.source;
 
 // Match valid param and returns strings as output by dox
@@ -16,27 +16,27 @@ function getTagByType (tags, type) {
 	return tags.filter(t => t.type === type)[0];
 }
 
-function getCommentName (comment, type) {
-	const nameTag = getTagByType(comment.tags, type);
-	const nameString = nameTag ? nameTag.string : 'Missing Name!';
-	return `\n### ${nameString}\n`;
+function getCommentName (comment) {
+	const descTag = getTagByType(comment.tags, 'desc');
+	const nameString = descTag.string.match(paramRgx)[2];
+	return `### ${nameString}\n`;
 }
 
 function getCommentDescription (comment) {
 	const descTag = getTagByType(comment.tags, 'desc');
-	const descString = descTag ? descTag.string : 'Missing Description!';
-	return `${descString}\n`;
+	const descString = descTag.string.match(paramRgx)[3];
+	return `${descString}\n<br><br>\n`;
 }
 
 function getCommentParamsHead () {
-	return '\n#### Params\nName | Type | Description\n--- | --- | ---\n';
+	return '#### Params\nName | Type | Description\n--- | --- | ---\n';
 }
 
 function getCommentParamsRows (comment) {
 	
 	const params = comment.tags.filter(t => t.type === 'param');
 	
-	return params.map(p => {
+	const rows = params.map(p => {
 		
 		const match = p.string.match(paramRgx);
 		
@@ -46,8 +46,9 @@ function getCommentParamsRows (comment) {
 		}
 		
 		return `${match[2]} | \`${match[1]}\` | ${match[3]}\n`;
-		
-	}).join('');
+	});
+	
+	return `${rows.join('')}\n`;
 }
 
 function getCommentReturns (comment) {
@@ -66,16 +67,16 @@ function getCommentReturns (comment) {
 		return '';
 	}
 	
-	return `\n#### Returns\n\`${match[1]}\` ${match[2]}\n`;
+	return `#### Returns\n\`${match[1]}\` ${match[2]}\n<br><br>\n`;
 }
 
 function getCommentCode (comment) {
-	return `\n#### Code\n\`\`\`javascript\n${comment.code}\n\`\`\`\n`;
+	return `#### Code\n\`\`\`javascript\n${comment.code}\n\`\`\`\n<br><br>\n`;
 }
 
-function getCommentString (comment, type) {
+function getCommentString (comment) {
 	
-	let markdownString = getCommentName(comment, type);
+	let markdownString = getCommentName(comment);
 	markdownString += getCommentDescription(comment);
 	
 	const tableRows = getCommentParamsRows(comment);
@@ -91,31 +92,50 @@ function getCommentString (comment, type) {
 
 export function getMarkdownString (docsTree) {
 	
-	let markdownString = `# ${docsTree.pageName}\n`;
+	let markdownString = '';
+	const funcComments = [];
+	const eventComments = [];
 	
-	const funcComments = docsTree.comments.filter(c =>
-		getTagByType(c.tags, 'func')
-	);
+	docsTree.comments.forEach(c => {
+		
+		const descTag = getTagByType(c.tags, 'desc');
+		
+		// Skip if no desc tag
+		if (descTag) {
+			
+			const match = descTag.string.match(paramRgx);
+			
+			// Skip if desc tag badly formatted
+			if (match) {
+				
+				if (match[1] === 'Function') {
+					funcComments.push(c);
+				}
+				
+				if (match[1] === 'Event') {
+					eventComments.push(c);
+				}
+			}
+		}
+	});
 	
 	if (funcComments.length > 0) {
-		markdownString += '\n## Functions\n';
+		
+		markdownString += '## Functions\n\n';
+		
+		funcComments.forEach(fc =>
+			markdownString += getCommentString(fc)
+		);
 	}
-	
-	funcComments.forEach(fc =>
-		markdownString += getCommentString(fc, 'func')
-	);
-	
-	const eventComments = docsTree.comments.filter(c =>
-		getTagByType(c.tags, 'event')
-	);
 	
 	if (eventComments.length > 0) {
-		markdownString += '\n## Events\n';
+		
+		markdownString += '## Events\n\n';
+		
+		eventComments.forEach(ec =>
+			markdownString += getCommentString(ec)
+		);
 	}
-	
-	eventComments.forEach(ec =>
-		markdownString += getCommentString(ec, 'event')
-	);
 	
 	return markdownString;
 }
