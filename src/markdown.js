@@ -5,40 +5,39 @@
  */
 
 const typeRgx = /\{([a-zA-Z[\]]+)\}/.source;
-const nameRgx = /\s+([a-zA-Z0-9-.[\]]+)(?:\s+-)?/.source;
-const descRgx = /\s+([^-].+)/.source;
+const nameRgx = /([a-zA-Z0-9-.[\]]+)(?:\s+-)?/.source;
+const descRgx = /([^-].+)/.source;
 
 // Match valid param and returns strings as output by dox
-const paramRgx = new RegExp(`^${typeRgx}${nameRgx}${descRgx}$`);
-const returnsRgx = new RegExp(`^${typeRgx}${descRgx}$`);
+const descTagRgx = new RegExp(`^${nameRgx}\\s+${descRgx}$`);
+const paramTagRgx = new RegExp(`^${typeRgx}\\s+${nameRgx}\\s+${descRgx}$`);
+const returnsTagRgx = new RegExp(`^${typeRgx}\\s+${descRgx}$`);
 
 function getTagByType (tags, type) {
 	return tags.filter(t => t.type === type)[0];
 }
 
-function getCommentName (comment) {
+function getCommentNameAndDesc (comment) {
 	const descTag = getTagByType(comment.tags, 'desc');
-	const nameString = descTag.string.match(paramRgx)[2];
-	return `### ${nameString}\n`;
+	const match = descTag.string.match(descTagRgx);
+	return `### ${match[1]}\n${match[2]}\n<br><br>\n`;
 }
 
-function getCommentDescription (comment) {
-	const descTag = getTagByType(comment.tags, 'desc');
-	const descString = descTag.string.match(paramRgx)[3];
-	return `${descString}\n<br><br>\n`;
+function getCommentTableHead (heading) {
+	return `#### ${heading}\nName | Type | Description\n--- | --- | ---\n`;
 }
 
-function getCommentParamsHead () {
-	return '#### Params\nName | Type | Description\n--- | --- | ---\n';
-}
-
-function getCommentParamsRows (comment) {
+function getCommentTableRows (comment, tagType) {
 	
-	const params = comment.tags.filter(t => t.type === 'param');
+	const tags = comment.tags.filter(t => t.type === tagType);
 	
-	const rows = params.map(p => {
+	if (tags.length === 0) {
+		return null;
+	}
+	
+	const rows = tags.map(t => {
 		
-		const match = p.string.match(paramRgx);
+		const match = t.string.match(paramTagRgx);
 		
 		// Skip if tag is badly formatted
 		if (match === null) {
@@ -60,7 +59,7 @@ function getCommentReturns (comment) {
 		return '';
 	}
 	
-	const match = returnsTag.string.match(returnsRgx);
+	const match = returnsTag.string.match(returnsTagRgx);
 	
 	// Skip if tag is badly formatted
 	if (match === null) {
@@ -70,72 +69,43 @@ function getCommentReturns (comment) {
 	return `#### Returns\n\`${match[1]}\` ${match[2]}\n<br><br>\n`;
 }
 
-function getCommentCode (comment) {
-	return `#### Code\n\`\`\`javascript\n${comment.code}\n\`\`\`\n<br><br>\n`;
-}
+// function getCommentCode (comment) {
+// 	return `#### Code\n\`\`\`javascript\n${comment.code}\n\`\`\`\n<br><br>\n`;
+// }
 
 function getCommentString (comment) {
 	
-	let markdownString = getCommentName(comment);
-	markdownString += getCommentDescription(comment);
+	let markdownString = getCommentNameAndDesc(comment);
 	
-	const tableRows = getCommentParamsRows(comment);
+	const paramsRows = getCommentTableRows(comment, 'param');
 	
-	if (tableRows.length > 0) {
-		markdownString += getCommentParamsHead();
-		markdownString += tableRows;
+	if (paramsRows) {
+		markdownString += getCommentTableHead('Params');
+		markdownString += paramsRows;
 	}
 	
-	markdownString += getCommentReturns(comment);
-	return markdownString += getCommentCode(comment);
+	const dataRows = getCommentTableRows(comment, 'data');
+	
+	if (dataRows) {
+		markdownString += getCommentTableHead('Data');
+		markdownString += dataRows;
+	}
+	
+	return markdownString += getCommentReturns(comment);
 }
 
 export function getMarkdownString (docsTree) {
 	
 	let markdownString = '';
-	const funcComments = [];
-	const eventComments = [];
 	
-	docsTree.comments.forEach(c => {
+	Object.keys(docsTree.sections).forEach(s => {
 		
-		const descTag = getTagByType(c.tags, 'desc');
+		markdownString += `## ${s}\n\n`;
 		
-		// Skip if no desc tag
-		if (descTag) {
-			
-			const match = descTag.string.match(paramRgx);
-			
-			// Skip if desc tag badly formatted
-			if (match) {
-				
-				if (match[1] === 'Function') {
-					funcComments.push(c);
-				}
-				
-				if (match[1] === 'Event') {
-					eventComments.push(c);
-				}
-			}
-		}
+		docsTree.sections[s].forEach(c =>
+			markdownString += getCommentString(c)
+		);
 	});
-	
-	if (funcComments.length > 0) {
-		
-		markdownString += '## Functions\n\n';
-		
-		funcComments.forEach(fc =>
-			markdownString += getCommentString(fc)
-		);
-	}
-	
-	if (eventComments.length > 0) {
-		
-		markdownString += '## Events\n\n';
-		
-		eventComments.forEach(ec =>
-			markdownString += getCommentString(ec)
-		);
-	}
 	
 	return markdownString;
 }

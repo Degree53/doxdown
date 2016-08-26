@@ -28,19 +28,24 @@ function getPage (docsTree, pageName) {
 
 function buildPages (docsTree, pathNames, comment) {
 	
-	if (pathNames.length > 0) {
+	if (pathNames.length > 1) {
 		
 		const page = getPage(docsTree, pathNames[0]);
-		
 		buildPages(page, pathNames.slice(1), comment);
 		
 	} else {
 		
-		if (!docsTree.comments) {
-			docsTree.comments = [];
+		const section = pathNames[0];
+		
+		if (!docsTree.sections) {
+			docsTree.sections = {};
 		}
 		
-		docsTree.comments.push(comment);
+		if (!docsTree.sections[section]) {
+			docsTree.sections[section] = [];
+		}
+		
+		docsTree.sections[section].push(comment);
 	}
 }
 
