@@ -21,13 +21,12 @@ src | s | `./` | relative path to the source directory
 
 ## Comment Format
 
-***doxdown*** looks for jsDoc-style comments with a special `@docs` tag in the format `document [// section] // page` which describes where the comment belongs in which document. Use a jsDoc `@func` or `@event` tag followed by a name along with a `@desc` tag to describe the function or event. You can have any number of jsDoc style `@param` tags and one `@returns` tag.
+***doxdown*** looks for jsDoc-style comments with a special `@docs` tag in the format `document [// page] // section` which describes where the comment belongs in which document. Use a jsDoc `@desc` to describe the function or event in the format `@name - description`. You can have any number of `@params` or `@data` tags and one `@returns` tag.
 
 ```javascript
 /**
  * @docs Some Docs // Users & Accounts // User Helpers
- * @func getUsernames
- * @desc A description of getUsernames
+ * @desc getUsernames - A description of getUsernames
  * @param {Object[]} users - An array of user objects
  * @param {String} users[].name - A user's name
  * @param {Number} limit - The max number to return
@@ -47,14 +46,13 @@ function getUsernames (users, limit) {
 
 /**
  * @docs Tracking // Registration
- * @event registration-complete
- * @desc Fires when a user successfully completes registration.
- * @param {String} forename - The user's forename
- * @param {String} surname - The user's surname
- * @param {Date} dob - The user's date of birth
- * @param {Object} address - An object containing details of a user's address
- * @param {String} address.house - The house name/no. of the user's address
- * @param {String} address.postcode - The postcode of the user's address
+ * @desc registration-complete - Fires when a user successfully completes registration.
+ * @data {String} forename - The user's forename
+ * @data {String} surname - The user's surname
+ * @data {Date} dob - The user's date of birth
+ * @data {Object} address - An object containing details of a user's address
+ * @data {String} address.house - The house name/no. of the user's address
+ * @data {String} address.postcode - The postcode of the user's address
  */
 
 SomeTrackingAPI.trigger('registration-complete', {
